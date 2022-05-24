@@ -134,12 +134,14 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
         var layout: View = LayoutInflater.from(this).inflate(R.layout.layout_dropdown, null)
         val textInputLayout = layout.findViewById<TextInputLayout>(R.id.tl_dd)
         textInputLayout.hint = claimField.label
+        textInputLayout.setTag(claimField.id)
         val autoCompleteTextView = layout.findViewById<MaterialAutoCompleteTextView>(R.id.av_dd)
         if(claimField.required){
             textInputLayout.hint = claimField.label.plus( " * ")
         }
         val claimFieldOptions:MutableList<ClaimFieldOption> = mutableListOf()
-
+        val tag = "dd"+claimField.rowId
+        autoCompleteTextView.setTag(tag)
         val arrayAdapter = ArrayAdapter<ClaimFieldOption>(this,android.R.layout.simple_dropdown_item_1line,claimFieldOptions)
         autoCompleteTextView.setAdapter(arrayAdapter)
 
@@ -160,11 +162,13 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
         val textInputLayout = layout.findViewById<TextInputLayout>(R.id.textInputLayout)
 
         textInputLayout.hint = claimField.label
+        textInputLayout.setTag(claimField.id)
         if(claimField.required){
             textInputLayout.hint = claimField.label.plus( " * ")
         }
         val textInputEditText = layout.findViewById<TextInputEditText>(R.id.textInputEditText)
-
+        val tag="et"+claimField.rowId
+        textInputEditText.setTag(tag)
         textInputEditText.setSingleLine()
         if (claimField.type.equals(Global.SingleLineTextAllCaps, true)) {
             textInputEditText.isAllCaps = true
@@ -226,8 +230,9 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
             when(claimField.type){
                 Global.SingleLineTextNumeric,
                 Global.SingleLineTextAllCaps, Global.SingleLineText -> {
-                    val view = claimField.view?.findViewById(R.id.textInputEditText) as TextInputEditText
-                    val view1 = claimField.view?.findViewById(R.id.textInputLayout) as TextInputLayout
+                    val tag = "et"+claimField.rowId
+                    val view:TextInputEditText = ll_fields.findViewWithTag(tag) as TextInputEditText
+                    val view1:TextInputLayout = ll_fields.findViewWithTag(claimField.id) as TextInputLayout
                     if(claimField.required && view.text.toString().isEmpty()){
                         isFormValid=false
                         view1.error = "Field is required"
@@ -236,9 +241,10 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
                     }
                 }
                 Global.DropDown->{
-                    val view = claimField.view?.findViewById(R.id.av_dd) as MaterialAutoCompleteTextView
-                    val view1 = claimField.view?.findViewById(R.id.tl_dd) as TextInputLayout
-                    if(claimField.required &&  (view.text.toString().isEmpty() || !view.isSelected)){
+                    val tag = "dd"+claimField.rowId
+                    val view:MaterialAutoCompleteTextView = ll_fields.findViewWithTag(tag) as MaterialAutoCompleteTextView
+                    val view1:TextInputLayout = ll_fields.findViewWithTag(claimField.id) as TextInputLayout
+                    if(claimField.required &&  (view.text.toString().isEmpty())){
                         isFormValid=false
                         view1.error = "Field is required"
                     }else{
