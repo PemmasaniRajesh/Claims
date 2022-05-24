@@ -226,25 +226,23 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
             when(claimField.type){
                 Global.SingleLineTextNumeric,
                 Global.SingleLineTextAllCaps, Global.SingleLineText -> {
-                    val view = claimField.view?.findViewById<TextInputEditText>(R.id.textInputEditText)
-                    val view1 = claimField.view?.findViewById<TextInputLayout>(R.id.textInputLayout)
-                    if(claimField.required && view?.text.toString().isNullOrEmpty()){
+                    val view = claimField.view?.findViewById(R.id.textInputEditText) as TextInputEditText
+                    val view1 = claimField.view?.findViewById(R.id.textInputLayout) as TextInputLayout
+                    if(claimField.required && view.text.toString().isEmpty()){
                         isFormValid=false
-                        view1?.error = "Field is required"
-                        view1?.isErrorEnabled=true
+                        view1.error = "Field is required"
                     }else{
-                        view1?.error=null
+                        view1.error =null
                     }
                 }
                 Global.DropDown->{
-                    val view = claimField.view?.findViewById<MaterialAutoCompleteTextView>(R.id.av_dd)
-                    val view1 = claimField.view?.findViewById<TextInputLayout>(R.id.tl_dd)
-                    if(claimField.required &&  (view?.text.toString().isNullOrEmpty() || !view!!.isSelected)){
+                    val view = claimField.view?.findViewById(R.id.av_dd) as MaterialAutoCompleteTextView
+                    val view1 = claimField.view?.findViewById(R.id.tl_dd) as TextInputLayout
+                    if(claimField.required &&  (view.text.toString().isEmpty() || !view.isSelected)){
                         isFormValid=false
-                        view1?.error = "Field is required"
-                        view1?.isErrorEnabled=true
+                        view1.error = "Field is required"
                     }else{
-                        view1?.error=null
+                        view1.error =null
                     }
                 }
             }

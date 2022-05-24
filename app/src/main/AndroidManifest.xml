@@ -11,11 +11,8 @@
         android:theme="@style/Theme.Claims">
         <activity
             android:name=".SplashScreenActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ClaimsActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
+            android:theme="@style/customsplashscreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,13 +20,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ClaimsActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

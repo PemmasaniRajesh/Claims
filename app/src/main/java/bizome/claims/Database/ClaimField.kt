@@ -15,7 +15,7 @@ data class ClaimField(
     val name:String,
     val label:String,
     val type:String,
-    val required:Boolean,
+    var required:Boolean,
     val isdependant:Boolean,
     val created:String,
     val modified:String,
