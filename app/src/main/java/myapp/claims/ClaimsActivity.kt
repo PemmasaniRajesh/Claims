@@ -1,45 +1,35 @@
-package bizome.claims
+package myapp.claims
 
 import android.os.Bundle
 import android.text.InputType
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.view.setMargins
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import bizome.claims.Database.*
+import myapp.claims.Database.*
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import myapp.claims.databinding.ActivityClaimsBinding
+import myapp.claims.databinding.LayoutDropdownBinding
+import myapp.claims.databinding.LayoutEditTextBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
 
-    private lateinit var ll_fields: LinearLayout
-    private lateinit var appDatabase:AppDatabase
-    private lateinit var repository: ClaimsRepository
-    private lateinit var viewModelFactory: ClaimsDataViewModel.ClaimsDataViewModelFactory
-    private lateinit var viewModel:ClaimsDataViewModel
+    private lateinit var binding: ActivityClaimsBinding
 
-    private lateinit var tl_claim_type:TextInputLayout
-    private lateinit var av_claim_type:MaterialAutoCompleteTextView
+    private val viewModel by viewModel<ClaimsDataViewModel>()
 
-    private lateinit var claimTypeAdatper:ArrayAdapter<ClaimType>
+    private lateinit var claimTypeAdapter:ArrayAdapter<ClaimType>
 
     private lateinit var claimTypeList:MutableList<ClaimType>
 
     private lateinit var selectedClaimType: ClaimType
 
-    private lateinit var rv_expenseList:RecyclerView
     private lateinit var expenseAdapter: ExpenseAdapter
 
     private lateinit var expenseList:MutableList<Expense>
@@ -48,12 +38,10 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_claims)
 
-        ll_fields = findViewById(R.id.ll_fieldUI)
+        binding = ActivityClaimsBinding.inflate(layoutInflater)
 
-        tl_claim_type = findViewById(R.id.tl_claim_type)
-        av_claim_type = findViewById(R.id.av_claim_type)
+        setContentView(binding.root)
 
         claimTypeList = mutableListOf()
         expenseList = mutableListOf()
@@ -68,80 +56,74 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
     }
 
     private fun initExpenseAdapter(){
-        rv_expenseList = findViewById(R.id.rv_expense_list)
         expenseAdapter = ExpenseAdapter(expenseList)
         val layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
-        rv_expenseList.layoutManager = layoutManager
-        rv_expenseList.addItemDecoration(DividerItemDecoration(this,layoutManager.orientation))
+        binding.rvExpenseList.layoutManager = layoutManager
+        binding.rvExpenseList.addItemDecoration(DividerItemDecoration(this,layoutManager.orientation))
 
-        rv_expenseList.adapter = expenseAdapter
+        binding.rvExpenseList.adapter = expenseAdapter
     }
 
     private fun setClaimTypeAdapter() {
 
-        claimTypeAdatper = ArrayAdapter<ClaimType>(this,android.R.layout.simple_dropdown_item_1line,claimTypeList)
-        av_claim_type.setAdapter(claimTypeAdatper)
+        claimTypeAdapter = ArrayAdapter<ClaimType>(this,android.R.layout.simple_dropdown_item_1line,claimTypeList)
+        binding.avClaimType.setAdapter(claimTypeAdapter)
 
-        av_claim_type.setOnItemClickListener { parent,view,position,_ ->
+        binding.avClaimType.setOnItemClickListener { parent,view,position,_ ->
             selectedClaimType = claimTypeList.get(position)
 
-            ll_fields.removeAllViews()
+            binding.llDynamicField.removeAllViews()
+            expenseList.clear()
+            expenseAdapter.notifyItemRangeRemoved(0,0)
 
             viewModel.getClaimFields(claimTypeId = selectedClaimType.id).observe(this) {
                 for (claimField in it) {
-                    if (claimField.type.equals(Global.DropDown, true)) {
-                        ll_fields.addView(createDropDownField(claimField))
+                    if (claimField.type.equals(Global.DROPDOWN, true)) {
+                        binding.llDynamicField.addView(createDropDownField(claimField))
 
                         claimField.view = createDropDownField((claimField))
                         dynamicFields.add(claimField)
                     }else{
-                        ll_fields.addView(createSingleLineTextField(claimField))
+                        binding.llDynamicField.addView(createSingleLineTextField(claimField))
                         claimField.view = createSingleLineTextField((claimField))
                         dynamicFields.add(claimField)
                     }
                 }
             }
 
-            expenseList.clear()
-            expenseAdapter.notifyDataSetChanged()
-
             viewModel.getExpenses(claimTypeId = selectedClaimType.id).observe(this){
+                /*this is not a recommended way...we can use latest listAdapter inplace of recycler adapter..*/
+                val currentSize = expenseList.size
+                expenseList.clear()
                 expenseList.addAll(it)
-                expenseAdapter.notifyDataSetChanged()
+                expenseAdapter.notifyItemRangeRemoved(0,currentSize)
+                expenseAdapter.notifyItemRangeInserted(0,it.size)
             }
         }
     }
 
     private fun initViewModel(){
-        appDatabase = AppDatabase.getInstance(ClaimsActivity@ this)
-        repository = ClaimsRepository(appDatabase)
-
-
-        viewModelFactory = ClaimsDataViewModel.ClaimsDataViewModelFactory(repository)
-
-        viewModel =
-            ViewModelProvider(this, viewModelFactory).get(ClaimsDataViewModel::class.java)
-
-
         viewModel.getAllClaimTypes().observe(this) {
             println("ItemsSize${it.size}")
             claimTypeList.addAll(it)
-            claimTypeAdatper.notifyDataSetChanged()
+            claimTypeAdapter.notifyDataSetChanged()
         }
     }
 
     private fun createDropDownField(claimField: ClaimField): View {
-        var layout: View = LayoutInflater.from(this).inflate(R.layout.layout_dropdown, null)
-        val textInputLayout = layout.findViewById<TextInputLayout>(R.id.tl_dd)
+        val binding = LayoutDropdownBinding.inflate(layoutInflater);
+        var layout: View = binding.root
+
+        val textInputLayout = binding.tlDropDown
         textInputLayout.hint = claimField.label
-        textInputLayout.setTag(claimField.id)
-        val autoCompleteTextView = layout.findViewById<MaterialAutoCompleteTextView>(R.id.av_dd)
+        textInputLayout.tag = claimField.id
+        val autoCompleteTextView = binding.avDropDown
         if(claimField.required){
             textInputLayout.hint = claimField.label.plus( " * ")
         }
         val claimFieldOptions:MutableList<ClaimFieldOption> = mutableListOf()
         val tag = "dd"+claimField.rowId
-        autoCompleteTextView.setTag(tag)
+        autoCompleteTextView.tag = tag
         val arrayAdapter = ArrayAdapter<ClaimFieldOption>(this,android.R.layout.simple_dropdown_item_1line,claimFieldOptions)
         autoCompleteTextView.setAdapter(arrayAdapter)
 
@@ -157,22 +139,24 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
 
     private fun createSingleLineTextField(claimField: ClaimField): View {
 
-        var layout: View = LayoutInflater.from(this).inflate(R.layout.layout_edit_text, null)
+        val binding = LayoutEditTextBinding.inflate(layoutInflater)
 
-        val textInputLayout = layout.findViewById<TextInputLayout>(R.id.textInputLayout)
+        var layout: View =binding.root
+
+        val textInputLayout = binding.textInputLayout
 
         textInputLayout.hint = claimField.label
-        textInputLayout.setTag(claimField.id)
+        textInputLayout.tag = claimField.id
         if(claimField.required){
             textInputLayout.hint = claimField.label.plus( " * ")
         }
-        val textInputEditText = layout.findViewById<TextInputEditText>(R.id.textInputEditText)
+        val textInputEditText = binding.textInputEditText
         val tag="et"+claimField.rowId
-        textInputEditText.setTag(tag)
+        textInputEditText.tag = tag
         textInputEditText.setSingleLine()
-        if (claimField.type.equals(Global.SingleLineTextAllCaps, true)) {
+        if (claimField.type.equals(Global.SINGLE_LINE_TEXT_ALL_CAPS, true)) {
             textInputEditText.isAllCaps = true
-        } else if (claimField.type.equals(Global.SingleLineTextNumeric, true)) {
+        } else if (claimField.type.equals(Global.SINGLE_LINE_TEXT_NUMERIC, true)) {
             textInputEditText.inputType = InputType.TYPE_CLASS_NUMBER
         }
 
@@ -181,24 +165,22 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
 
     override fun onClick(p0: View?) {
         when(p0?.id){
-            R.id.btn_save->{
+            R.id.btnSave->{
                 saveForm()
             }
-            R.id.btn_addClaim->{
+            R.id.btnAddClaim->{
                 addExpense()
             }
         }
     }
 
     private fun addExpense() {
-        val tl_expense = findViewById<TextInputLayout>(R.id.tl_expense)
-        val et_expense = findViewById<TextInputEditText>(R.id.et_expense)
 
-        if(et_expense.text.toString().trim().isNullOrEmpty()){
-            tl_expense.error="Please enter the expense amount"
+        if(binding.etExpense.text.toString().trim().isNullOrEmpty()){
+            binding.tlExpense.error="Please enter the expense amount"
             return
         }else{
-            tl_expense.error=null
+            binding.tlExpense.error=null
         }
 
         if(!::selectedClaimType.isInitialized){
@@ -206,7 +188,7 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
             return
         }
 
-        val amt = et_expense.text.toString().toInt() * 2
+        val amt = binding.etExpense.text.toString().toInt() * 2
         val dt = System.currentTimeMillis()
 
         val expense = Expense(0,selectedClaimType.id,selectedClaimType.name,dt,amt)
@@ -214,7 +196,7 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
 
         Toast.makeText(ClaimsActivity@this,"Expense added successfully",Toast.LENGTH_LONG).show()
 
-        et_expense.text?.clear()
+        binding.etExpense.text?.clear()
     }
 
     private fun saveForm() {
@@ -228,11 +210,11 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
 
         for(claimField in dynamicFields){
             when(claimField.type){
-                Global.SingleLineTextNumeric,
-                Global.SingleLineTextAllCaps, Global.SingleLineText -> {
+                Global.SINGLE_LINE_TEXT_NUMERIC,
+                Global.SINGLE_LINE_TEXT_ALL_CAPS, Global.SINGLE_LINE_TEXT -> {
                     val tag = "et"+claimField.rowId
-                    val view:TextInputEditText = ll_fields.findViewWithTag(tag) as TextInputEditText
-                    val view1:TextInputLayout = ll_fields.findViewWithTag(claimField.id) as TextInputLayout
+                    val view:TextInputEditText = binding.llDynamicField.findViewWithTag(tag) as TextInputEditText
+                    val view1:TextInputLayout = binding.llDynamicField.findViewWithTag(claimField.id) as TextInputLayout
                     if(claimField.required && view.text.toString().isEmpty()){
                         isFormValid=false
                         view1.error = "Field is required"
@@ -240,10 +222,10 @@ class ClaimsActivity : AppCompatActivity(),View.OnClickListener {
                         view1.error =null
                     }
                 }
-                Global.DropDown->{
+                Global.DROPDOWN->{
                     val tag = "dd"+claimField.rowId
-                    val view:MaterialAutoCompleteTextView = ll_fields.findViewWithTag(tag) as MaterialAutoCompleteTextView
-                    val view1:TextInputLayout = ll_fields.findViewWithTag(claimField.id) as TextInputLayout
+                    val view:MaterialAutoCompleteTextView = binding.llDynamicField.findViewWithTag(tag) as MaterialAutoCompleteTextView
+                    val view1:TextInputLayout = binding.llDynamicField.findViewWithTag(claimField.id) as TextInputLayout
                     if(claimField.required &&  (view.text.toString().isEmpty())){
                         isFormValid=false
                         view1.error = "Field is required"

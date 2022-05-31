@@ -1,4 +1,4 @@
-package bizome.claims
+package myapp.claims
 
 import org.junit.Test
 

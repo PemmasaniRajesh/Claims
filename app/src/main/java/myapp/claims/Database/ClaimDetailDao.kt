@@ -1,4 +1,4 @@
-package bizome.claims.Database
+package myapp.claims.Database
 
 import androidx.room.Dao
 import androidx.room.Insert

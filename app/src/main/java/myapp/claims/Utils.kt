@@ -1,4 +1,4 @@
-package bizome.claims
+package myapp.claims
 
 import java.text.SimpleDateFormat
 import java.util.*

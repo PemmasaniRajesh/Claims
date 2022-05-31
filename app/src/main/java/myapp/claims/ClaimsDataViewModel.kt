@@ -1,20 +1,17 @@
-package bizome.claims
+package myapp.claims
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import bizome.claims.Database.*
-import kotlinx.coroutines.flow.Flow
+import myapp.claims.Database.*
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
 class ClaimsDataViewModel(private val repository: ClaimsRepository):ViewModel() {
 
 
-    fun insert(claimtype:ClaimType) {
+    fun insert(claimType:ClaimType) {
         viewModelScope.launch {
-            repository.insertClaimTrans(claimtype)
+            repository.insertClaimTrans(claimType)
         }
     }
 
@@ -38,15 +35,5 @@ class ClaimsDataViewModel(private val repository: ClaimsRepository):ViewModel() 
 
     fun getExpenses(claimTypeId: Int):LiveData<List<Expense>>{
         return repository.getExpenses(claimTypeId)
-    }
-
-    class ClaimsDataViewModelFactory(private val repository: ClaimsRepository):ViewModelProvider.Factory{
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if(modelClass.isAssignableFrom(ClaimsDataViewModel::class.java)){
-                return ClaimsDataViewModel(repository) as T
-            }
-            throw IllegalArgumentException("Unknown Model Class")
-        }
-
     }
 }

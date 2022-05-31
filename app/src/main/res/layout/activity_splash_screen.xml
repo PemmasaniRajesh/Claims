@@ -8,7 +8,7 @@
     tools:context=".SplashScreenActivity">
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progress_circular"
+        android:id="@+id/progressCircular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
@@ -22,7 +22,7 @@
      <com.google.android.material.textview.MaterialTextView
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         app:layout_constraintTop_toBottomOf="@id/progress_circular"
+         app:layout_constraintTop_toBottomOf="@id/progressCircular"
          android:layout_marginTop="8dp"
          android:textSize="24sp"
          android:text="Loading Claims Data..."

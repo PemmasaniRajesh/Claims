@@ -1,4 +1,4 @@
-package bizome.claims.DynamicFields
+package myapp.claims.DynamicFields
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
 import android.view.View
-import bizome.claims.R
+import myapp.claims.R
 
 /**
  * TODO: document your custom view class.

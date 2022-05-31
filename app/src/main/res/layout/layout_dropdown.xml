@@ -9,14 +9,14 @@
     >
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tl_dd"
+        android:id="@+id/tlDropDown"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         >
 
         <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/av_dd"
+            android:id="@+id/avDropDown"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />

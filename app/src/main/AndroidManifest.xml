@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="bizome.claims">
+    package="myapp.claims">
 
     <application
         android:allowBackup="true"
@@ -8,9 +8,10 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_baseline_dynamic_form"
         android:supportsRtl="true"
+        android:name="myapp.claims.MyApplication"
         android:theme="@style/Theme.Claims">
         <activity
-            android:name=".SplashScreenActivity"
+            android:name="myapp.claims.SplashScreenActivity"
             android:theme="@style/customsplashscreen"
             android:exported="true">
             <intent-filter>
@@ -20,13 +21,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ClaimsActivity"
+            android:name="myapp.claims.ClaimsActivity"
             android:exported="true"
             android:screenOrientation="portrait">
 
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="myapp.claims.MainActivity"
             android:exported="true">
 
         </activity>

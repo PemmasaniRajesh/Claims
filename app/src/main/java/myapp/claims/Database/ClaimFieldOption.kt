@@ -1,4 +1,4 @@
-package bizome.claims.Database
+package myapp.claims.Database
 
 import androidx.annotation.Nullable
 import androidx.room.Entity

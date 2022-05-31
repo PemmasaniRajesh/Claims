@@ -7,7 +7,7 @@
     android:padding="4dp">
 
     <TextView
-        android:id="@+id/tv_claim_type_label"
+        android:id="@+id/tvClaimTypeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Claim Type :"
@@ -17,58 +17,58 @@
         />
 
     <TextView
-        android:id="@+id/tv_claim_type"
+        android:id="@+id/tvClaimType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Travel"
         android:layout_marginStart="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_claim_type_label"
+        app:layout_constraintStart_toEndOf="@id/tvClaimTypeLabel"
         />
 
     <TextView
-        android:id="@+id/tv_claim_date_label"
+        android:id="@+id/tvClaimDateLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Claim Date :"
         android:textStyle="bold"
         android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_claim_type_label"
+        app:layout_constraintTop_toBottomOf="@id/tvClaimTypeLabel"
         app:layout_constraintStart_toStartOf="parent"
         />
 
     <TextView
-        android:id="@+id/tv_claim_date"
+        android:id="@+id/tvClaimDate"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="2020-11-03"
         android:layout_marginStart="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_claim_date_label"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_claim_date_label"
+        app:layout_constraintStart_toEndOf="@id/tvClaimDateLabel"
+        app:layout_constraintBaseline_toBaselineOf="@id/tvClaimDateLabel"
         />
 
     <TextView
-        android:id="@+id/tv_claim_expense_label"
+        android:id="@+id/tvClaimExpenseLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Expense :"
         android:textStyle="bold"
         android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_claim_date_label"
+        app:layout_constraintTop_toBottomOf="@id/tvClaimDateLabel"
         app:layout_constraintStart_toStartOf="parent"
         />
 
     <TextView
-        android:id="@+id/tv_claim_expense"
+        android:id="@+id/tvClaimExpense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="120"
         android:layout_marginStart="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_claim_expense_label"
-        app:layout_constraintBaseline_toBaselineOf="@id/tv_claim_expense_label"
+        app:layout_constraintStart_toEndOf="@id/tvClaimExpenseLabel"
+        app:layout_constraintBaseline_toBaselineOf="@id/tvClaimExpenseLabel"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,8 +1,7 @@
-package bizome.claims.Database
+package myapp.claims.Database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClaimTypeDao {

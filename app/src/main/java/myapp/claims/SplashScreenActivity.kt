@@ -1,43 +1,34 @@
-package bizome.claims
+package myapp.claims
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import bizome.claims.Database.AppDatabase
-import bizome.claims.Database.ClaimField
-import bizome.claims.Database.ClaimType
-import bizome.claims.Database.ClaimsRepository
+import myapp.claims.Database.ClaimField
+import myapp.claims.Database.ClaimType
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import kotlinx.coroutines.GlobalScope
+import myapp.claims.databinding.ActivityClaimsBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
 class SplashScreenActivity : AppCompatActivity() {
 
-    private lateinit var appDatabase:AppDatabase
-    private lateinit var repository: ClaimsRepository
-    private lateinit var viewModelFactory: ClaimsDataViewModel.ClaimsDataViewModelFactory
-    private lateinit var viewModel:ClaimsDataViewModel
+
+    private val viewModel by viewModel<ClaimsDataViewModel>()
 
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var binding: ActivityClaimsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash_screen)
-
+        binding = ActivityClaimsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SplashScreenActivity@this)
-
-        appDatabase = AppDatabase.getInstance(SplashScreenActivity@this)
-        repository = ClaimsRepository(appDatabase)
-        viewModelFactory = ClaimsDataViewModel.ClaimsDataViewModelFactory(repository)
-        viewModel = ViewModelProvider(this,viewModelFactory).get(ClaimsDataViewModel::class.java)
 
         if(sharedPreferences.getBoolean(Global.CLAIMS_DATA_LOADED,false)){
             startClaimsActivity()
@@ -55,7 +46,7 @@ class SplashScreenActivity : AppCompatActivity() {
         },3000)
     }
 
-    fun insertClaimsJsonToRoomDb(){
+    private fun insertClaimsJsonToRoomDb(){
         val jsonObject = loadClaimsJson()
         val claimTypList:MutableList<ClaimType> = mutableListOf()
 

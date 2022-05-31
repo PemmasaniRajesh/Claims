@@ -1,4 +1,4 @@
-package bizome.claims.Database
+package myapp.claims.Database
 
 import android.view.View
 import androidx.room.Entity

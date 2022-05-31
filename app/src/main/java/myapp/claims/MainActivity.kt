@@ -1,37 +1,26 @@
-package bizome.claims
+package myapp.claims
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import androidx.lifecycle.ViewModelProvider
-import bizome.claims.Database.AppDatabase
-import bizome.claims.Database.ClaimField
-import bizome.claims.Database.ClaimType
-import bizome.claims.Database.ClaimsRepository
+import myapp.claims.Database.ClaimField
+import myapp.claims.Database.ClaimType
+import myapp.claims.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding:ActivityMainBinding
+    private val viewModel by viewModel<ClaimsDataViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val btn = findViewById<Button>(R.id.btn_loadJson)
-
-        val appDatabase = AppDatabase.getInstance(MainActivity@this)
-        val repository = ClaimsRepository(appDatabase)
-
-
-        val viewModelFactory = ClaimsDataViewModel.ClaimsDataViewModelFactory(repository)
-
-        val viewModel = ViewModelProvider(this,viewModelFactory).get(ClaimsDataViewModel::class.java)
-
-        btn.setOnClickListener {
+        binding.btnLoadJson.setOnClickListener {
             val jsonObject = loadClaimsJson()
             val claimTypList:MutableList<ClaimType> = mutableListOf()
 
@@ -61,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun loadClaimsJson(): JsonObject? {
+    private fun loadClaimsJson(): JsonObject? {
         var jsonString = "{}"
         try {
             jsonString = this.assets.open("claims_json.json")
